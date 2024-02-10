@@ -1,0 +1,48 @@
+# Ignore composer dependencies
+/vendor
+
+# Ignore PHPStorm project files
+/.idea
+
+# Ignore logs
+/log
+
+# Ignore cache files
+/cache
+
+# Ignore compiled files
+*.phpc
+
+# Ignore environment configuration files
+.env
+
+# Ignore session files
+/sessions
+
+# Ignore build artifacts
+/build
+
+# Ignore database files
+/database
+
+# Ignore uploaded files
+/uploads
+
+# Ignore generated documentation
+/docs
+
+# Ignore temporary files
+/tmp
+
+# Ignore configuration files with sensitive information
+/config/*.php
+
+# Ignore composer lock file
+composer.lock
+
+# Ignore node_modules
+/node_modules
+
+# Ignore vscode and DS_Store files
+.vscode
+.DS_Store
