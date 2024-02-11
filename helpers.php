@@ -21,9 +21,6 @@ function loadPartial($name)
 {
   $partialPath = basePath("views/partials/{$name}.php");
 
-  inspect($partialPath);
-
-
   if (!file_exists($partialPath)) {
     throw new Exception("Partial `{$name}` not found");
   }
@@ -36,13 +33,14 @@ function loadPartial($name)
  * @param string $name
  * @return void
  */
-function loadView($name)
+function loadView($name, $data = [])
 {
   $viewPath = basePath("views/{$name}.view.php");
 
   if (!file_exists($viewPath)) {
     throw new Exception("View `{$name}` not found");
   }
+  extract($data, EXTR_SKIP);
   require $viewPath;
 }
 
@@ -71,4 +69,16 @@ function inspectAndDie($value)
   var_dump($value);
   echo '</pre>';
   die();
+}
+
+/**
+ * Format a salary
+ * 
+ * @param string $salary
+ * 
+ * @return string
+ */
+function formatSalary($salary)
+{
+  return '$' . number_format(floatval($salary), 0, '.', ',');
 }
