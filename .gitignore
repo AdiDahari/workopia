@@ -1,0 +1,6 @@
+/vendor
+/ndoe_modules
+/config/db.php
+.env
+.vscode
+.DS_Store
