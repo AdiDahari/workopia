@@ -2,6 +2,8 @@
 
 namespace Framework;
 
+use App\Controllers\ErrorController;
+
 class Router
 {
   protected $routes = [];
@@ -76,42 +78,77 @@ class Router
   }
 
   /**
-   * Error handler
-   *
-   * @param int $statusCode
-   * @return void
-   */
-  public function error($statusCode = 404)
-  {
-    http_response_code($statusCode);
-    loadView('error/' . $statusCode);
-    exit;
-  }
-
-
-  /**
    * Route requests
    *
    * @param string $uri
    * @param string $method
    * @return void
    */
-  public function route($uri, $method)
+  public function route($uri)
   {
+
+    $requestMethod = $_SERVER['REQUEST_METHOD'];
+
+
     foreach ($this->routes as $route) {
-      if ($route['uri'] === $uri && $route['method'] === $method) {
-        // Extract controller and controller method
-        $controller = new ('App\\controllers\\' . $route['controller'])();
-        $controllerMethod = $route['controllerMethod'];
 
-        // init controller and call method
+      // Split request URI to segments
+      $uriSegments = explode("/", trim($uri, '/'));
 
-        // $controllerInstance = new $controller();
-        $controller->$controllerMethod();
-        return;
+      // Split route URI to segments
+      $routeSegments = explode("/", trim($route['uri'], "/"));
+
+      $match = true;
+
+      // Check number of segements
+      if (
+        count($uriSegments) === count($routeSegments) // 
+        && strtoupper($route['method']) === $requestMethod
+      ) {
+        $params = [];
+
+        $match = true;
+        for ($i = 0; $i < count($uriSegments); $i++) {
+          if (
+            $routeSegments[$i] !== $uriSegments[$i] // URIs do not match
+            && !preg_match('/\{(.+?)\}/', $routeSegments[$i]) // Regex does not match
+          ) {
+            $match = false;
+            break;
+          }
+
+          if (preg_match('/\{(.+?)\}/', $routeSegments[$i], $matches)) { // Match {<key>}
+            $params[$matches[1]] = $uriSegments[$i]; // params[<key>] = <value>
+          }
+        }
+
+        if ($match) {
+          // Extract controller and controller method
+          $controller = new ('App\\Controllers\\' . $route['controller'])();
+          $controllerMethod = $route['controllerMethod'];
+
+          // $controllerInstance = new $controller();
+          $controller->$controllerMethod($params);
+          return;
+        }
       }
+
+
+
+
+      // if ($route['uri'] === $uri && $route['method'] === $requestMethod) {
+      //   // Extract controller and controller method
+      //   $controller = new ('App\\Controllers\\' . $route['controller'])();
+      //   $controllerMethod = $route['controllerMethod'];
+
+      //   // init controller and call method
+
+      //   // $controllerInstance = new $controller();
+      //   $controller->$controllerMethod();
+      //   return;
+      // }
     }
 
-    $this->error();
+    ErrorController::notFound();
   }
 }
