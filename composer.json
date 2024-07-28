@@ -1,0 +1,16 @@
+{
+  "name": "adidahari/workopia",
+  "description": "Job listing application",
+  "authors": [
+    {
+      "name": "Adi Dahari",
+      "email": "dahariadi16@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Framework\\": "Framework/",
+      "App\\": "App/"
+    }
+  }
+}
