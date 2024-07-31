@@ -89,6 +89,11 @@ class Router
 
     $requestMethod = $_SERVER['REQUEST_METHOD'];
 
+    // Check for methodical request
+    if ($requestMethod === 'POST' && isset($_POST['_method'])) {
+      // Set request method
+      $requestMethod = strtoupper($_POST['_method']);
+    }
 
     foreach ($this->routes as $route) {
 
