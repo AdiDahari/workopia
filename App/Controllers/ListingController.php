@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Framework\Database;
+use Framework\Session;
 use Framework\Validation;
 
 class ListingController
@@ -77,7 +78,7 @@ class ListingController
     ];
 
     $data = array_intersect_key($_POST, array_flip($allowedFields));
-    $data['user_id'] = 1;
+    $data['user_id'] = Session::get('user')['id'];
 
     $data = array_map('sanitize', $data);
 

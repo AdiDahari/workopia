@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Framework\Database;
 use Framework\Validation;
+use Framework\Session;
 
 class UserController
 {
@@ -122,6 +123,31 @@ class UserController
 
 
     $this->db->query('INSERT INTO users (name, email, city, state, country, password) VALUES (:name, :email, :city, :state, :country, :password)', $params);
+
+    // Session data
+    Session::set('user', [
+      'id' => $this->db->conn->lastInsertId(),
+      'name' => $name,
+      'email' => $email,
+      'city' => $city,
+      'state' => $state,
+      'country' => $country,
+    ]);
+
+    redirect("/");
+  }
+
+  /**
+   * Logout handler
+   * 
+   * @return void
+   */
+  public function logout()
+  {
+    Session::clearAll();
+
+    $params = session_get_cookie_params();
+    setcookie('PHPSESSID', '', time() - 86400, $params['path'], $params['domain']);
 
     redirect("/");
   }
