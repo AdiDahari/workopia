@@ -96,16 +96,19 @@ class Router
 
     $requestMethod = $_SERVER['REQUEST_METHOD'];
 
+
     // Check for methodical request
     if ($requestMethod === 'POST' && isset($_POST['_method'])) {
       // Set request method
       $requestMethod = strtoupper($_POST['_method']);
     }
 
+
     foreach ($this->routes as $route) {
 
       // Split request URI to segments
       $uriSegments = explode("/", trim($uri, '/'));
+
 
       // Split route URI to segments
       $routeSegments = explode("/", trim($route['uri'], "/"));
@@ -126,6 +129,7 @@ class Router
             && !preg_match('/\{(.+?)\}/', $routeSegments[$i]) // Regex does not match
           ) {
             $match = false;
+
             break;
           }
 

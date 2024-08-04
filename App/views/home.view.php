@@ -5,7 +5,7 @@
 <?= loadPartial("navbar") ?>
 
 <!-- Search -->
-<?= loadPartial("search") ?>
+<?= loadPartial("search", ['keywords' => $keywords, 'location' => $location]) ?>
 
 <!-- Top Banner -->
 <?= loadPartial("top-banner") ?>
