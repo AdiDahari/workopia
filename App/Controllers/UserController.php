@@ -151,4 +151,81 @@ class UserController
 
     redirect("/");
   }
+
+  /**
+   * Authenticate user with email and password
+   * 
+   * @return void
+   */
+  public function authenticate()
+  {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $errors = [];
+
+    if (!Validation::email($email)) {
+      $errors['email'] = 'Email is required';
+    }
+
+    if (!Validation::string($password, 6, 50)) {
+      $errors['password'] = 'Password must be greater than 6 characters';
+    }
+
+    if (count($errors) > 0) {
+      loadView('users/login', [
+        'errors' => $errors,
+        'user' => [
+          'email' => $email,
+        ]
+      ]);
+      exit;
+    }
+
+    // Check if email exists
+    $params = [
+      'email' => $email
+    ];
+
+    $user = $this->db->query('SELECT * FROM users WHERE email = :email', $params)->fetch();
+
+    if (!$user) {
+      $errors['email'] = 'Incorrect email or password';
+
+      loadView('users/login', [
+        'errors' => $errors,
+        'user' => [
+          'email' => $email,
+        ]
+      ]);
+
+      exit;
+    }
+
+    // Check password
+    if (!password_verify($password, $user->password)) {
+      $errors['password'] = 'Incorrect email or password';
+
+      loadView('users/login', [
+        'errors' => $errors,
+        'user' => [
+          'email' => $email,
+        ]
+      ]);
+
+      exit;
+    }
+
+    // Session data
+    Session::set('user', [
+      'id' => $user->id,
+      'name' => $user->name,
+      'email' => $user->email,
+      'city' => $user->city,
+      'state' => $user->state,
+      'country' => $user->country,
+    ]);
+
+    redirect("/");
+  }
 }
