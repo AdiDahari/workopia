@@ -1,3 +1,8 @@
+<?php
+
+use Framework\Authorization;
+?>
+
 <!-- Head -->
 <?= loadPartial("head") ?>
 
@@ -16,15 +21,17 @@
         <i class="fa fa-arrow-alt-circle-left"></i>
         Back To Listings
       </a>
-      <div class="flex space-x-4 ml-4">
-        <a href="/listings/edit/<?= $listing->id ?>" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">Edit</a>
-        <!-- Delete Form -->
-        <form method="POST">
-          <input type="hidden" name="_method" value="DELETE">
-          <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded">Delete</button>
-        </form>
-        <!-- End Delete Form -->
-      </div>
+      <?php if (Authorization::isOwner($listing->user_id)) : ?>
+        <div class="flex space-x-4 ml-4">
+          <a href="/listings/edit/<?= $listing->id ?>" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded">Edit</a>
+          <!-- Delete Form -->
+          <form method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded">Delete</button>
+          </form>
+          <!-- End Delete Form -->
+        </div>
+      <?php endif; ?>
     </div>
     <div class="p-4">
       <h2 class="text-xl font-semibold"><?= $listing->title ?></h2>
@@ -34,7 +41,7 @@
       <ul class="my-4 bg-gray-100 p-4">
         <li class="mb-2"><strong>Salary:</strong> <?= formatSalary($listing->salary) ?></li>
         <li class="mb-2">
-          <strong>Location:</strong> <?= $listing->city ?>, <?= $listing->state ?>
+          <strong>Location:</strong> <?= $listing->city ?>, <?= $listing->state ?> (<?= $listing->country ?>)
         </li>
         <?php if (!empty($listing->tags)) : ?>
           <li class="mb-2">

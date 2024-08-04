@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use Framework\Authorization;
 use Framework\Database;
 use Framework\Session;
 use Framework\Validation;
@@ -27,7 +28,7 @@ class ListingController
   {
 
     // Query for all of the listings
-    $listings = $this->db->query("SELECT * FROM listings")->fetchAll();
+    $listings = $this->db->query("SELECT * FROM listings ORDER BY created_at DESC")->fetchAll();
 
     // Loading the view while providing the listings data.
     loadView('listings/index', [
@@ -117,7 +118,7 @@ class ListingController
 
       $this->db->query($query, $data);
 
-      $_SESSION['success_message'] = "Listing created successfully";
+      Session::setFlashMessage('success', 'Listing created successfully');
 
 
       redirect("/listings");
@@ -139,10 +140,17 @@ class ListingController
       return;
     }
 
+    // Authorize user
+    if (!Authorization::isOwner($listing->user_id)) {
+      Session::setFlashMessage('error', 'You are not authorized to delete this listing');
+
+      redirect("/listings/" . $listing->id);
+    }
+
     $this->db->query('DELETE FROM listings WHERE id = :id', $params);
 
     // Set flash message
-    $_SESSION['success_message'] = "Listing deleted successfully";
+    Session::setFlashMessage('success', 'Listing deleted successfully');
 
     redirect("/listings");
   }
@@ -161,6 +169,13 @@ class ListingController
     if (!$listing) {
       ErrorController::notFound("Listing not found");
       return;
+    }
+
+    // Authorize user
+    if (!Authorization::isOwner($listing->user_id)) {
+      Session::setFlashMessage('error', 'You are not authorized to edit this listing');
+
+      redirect("/listings/" . $listing->id);
     }
 
     loadView('listings/edit', [
@@ -222,7 +237,7 @@ class ListingController
       $updateData["id"] = $listing->id;
       $this->db->query($query, $updateData);
 
-      $_SESSION['success_message'] = "Listing updated successfully";
+      Session::setFlashMessage('success', 'Listing updated successfully');
 
 
       redirect('/listings/' . $listing->id);

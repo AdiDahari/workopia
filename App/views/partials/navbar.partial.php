@@ -11,7 +11,7 @@ use Framework\Session;
     <nav class="space-x-4">
       <?php if (Session::has('user')) : ?>
         <div class="flex items-center justify-between gap-4">
-          <div class="flex">Welcome <?= explode(" ", Session::get('user')['name'])[0] ?>!</div>
+          <div class="flex text-gray-500">Welcome <?= explode(" ", Session::get('user')['name'])[0] ?>!</div>
           <form method="POST" action="/auth/logout">
             <button type="submit" class="text-white inline hover:underline">Logout</button>
           </form>
